@@ -104,7 +104,6 @@ class Spider:
         visited = {} #keep track of visited links to avoid cycle
         
         # BFS from each seed
-        # q = [_ for _ in self.seeds]
         q = [self.seeds]
 
         while len(q) and depth < max_depth:

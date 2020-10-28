@@ -56,7 +56,6 @@ class Indexer:
 
         for word in word_dict:
             cnt = word_dict[word]
-            # print ("Normalized frequency: ", word, cnt/normalizing_factor)
             query = {"word":word}
 
             # upd = {"$push": {word: {docId: count}}}
