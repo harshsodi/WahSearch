@@ -10,6 +10,8 @@ import urllib.parse
 import urllib.robotparser
 import tldextract
 
+import urllib3
+
 from indexer import Indexer
 
 from bs4 import BeautifulSoup
@@ -26,7 +28,7 @@ class Spider:
         Constructor 
         """
         
-        self.seeds = "http://www.uwindsor.ca/" # Crawling starts from here
+        self.seeds = "https://www.w3schools.com" # Crawling starts from here
         self.urls = []
         self._load_indexer()
 
@@ -42,11 +44,12 @@ class Spider:
         """
 
         try:
-            http_response = urllib.request.urlopen(url)    
+            http = urllib3.PoolManager()
+            http_response = http.request('GET', url)    
             print("Get_url: ", http_response.geturl())
             return http_response
-        except Exception:
-            print("Error while fetching ", url)
+        except Exception as e:
+            print("Error while fetching ", url, e)
             return None
 
     def get_links(self, url, html_text):
@@ -120,7 +123,7 @@ class Spider:
             html_text = None
             response_url = None
             try:
-                html_text = http_response.read() # HTML text
+                html_text = http_response.data # HTML text
                 response_url = http_response.geturl() # Final URL after redirection
             except Exception:
                 continue
@@ -146,9 +149,6 @@ class Spider:
                             break
                     
                     visited[link] = True
-                    # f = open('/closet/links', 'a+')
-                    # f.write(link + "\n")
-                    # f.close()
                     q.append(link)
         
             depth += 1

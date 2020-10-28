@@ -4,7 +4,6 @@ from flask import Flask, request, render_template
 import json
 
 from src.SpellSuggestion import SpellSuggestion
-from src.modules.Pagination import Pagination
 from src.search import Search
 
 
