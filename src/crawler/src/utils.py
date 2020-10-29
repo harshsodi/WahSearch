@@ -20,6 +20,11 @@ class Utils:
         except Exception:
             print ("Error while loading processing engine. WIll index useless stuff along with useful ones.")
 
+
+    def get_project_root(self):
+        """Returns project root folder."""
+        return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     def get_processed_words_list(self, words):
 
         """

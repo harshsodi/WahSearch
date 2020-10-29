@@ -131,8 +131,8 @@ class Spider:
             
             try:
                 self.index_page(url, html_text) # Index the retrieved webpage
-            except Exception:
-                print ("Error while indexing ", response_url)
+            except Exception as e:
+                print ("Error while indexing ", response_url, e)
                 continue    
             
             links = self.get_links(url, html_text) # Get links from the current page
