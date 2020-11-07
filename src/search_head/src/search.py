@@ -3,13 +3,13 @@ import nltk
 import math
 import numpy as np
 import pymongo
-
+import os
 import utils
 
 from numpy.linalg import norm
 
 import utils
-
+from MongoClient import MongoClient
 
 class Search:
 
@@ -21,10 +21,13 @@ class Search:
         self.utils = utils.Utils()
         self.stemmer = nltk.SnowballStemmer("english")
 
-        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-        mydb = myclient["wah_search"]
-        self.index = mydb["index"]
-        self.docs = mydb["docs"]
+        try:
+            mongo_client = MongoClient()
+            self.index = mongo_client.index
+            self.docs = mongo_client.docs
+        except Exception as e:
+            print ("Error while initializing MongoClient object.", e)
+            raise e
 
         self.doc_vectors = {}
         self.words = []

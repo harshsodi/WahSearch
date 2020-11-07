@@ -1,0 +1,7 @@
+FROM python
+COPY ./src /opt/search_head/src
+COPY ./requirements.txt /opt/search_head/requirements.txt
+ENV ROOT_PATH=/opt/search_head/
+RUN pip install -r /opt/search_head/requirements.txt
+RUN cd /opt/search_head/src/
+CMD ["python", "/opt/search_head/src/server.py"]
