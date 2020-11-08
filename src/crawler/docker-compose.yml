@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  pre-process:
+    build: ./src/pre-processor
+    volumes:
+      - ./config.yml:/opt/config.yml
+      - ./seeds.lst:/opt/seeds.lst
+    networks:
+      - crawler
+  
+  worker:
+    build: .
+    volumes:
+      - ./config.yml:/opt/config.yml
+      - ./seeds.lst:/opt/seeds.lst
+    networks:
+      - crawler
+    depends_on:
+      - pre-process
+
+networks:
+  crawler:
+    driver: bridge

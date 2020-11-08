@@ -1,5 +1,9 @@
 """
-The engine to carry out searching through the web and indexing webpages
+The engine to carry out searching through the web and publishing the html
+pages to the message queue consumed by the indexer service
+
+To maintain memoization in distributed environment,
+Redis is used as a Set data-structure
 
 Author: Harsh Sodiwala
 """
@@ -11,10 +15,14 @@ import urllib.robotparser
 import tldextract
 
 import urllib3
+import json
+import redis
 
 from indexer import Indexer
 
 from bs4 import BeautifulSoup
+from utils import Utils
+from RabbitMQ import RabbitMQ
 
 class Spider:
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -28,11 +36,17 @@ class Spider:
         Constructor 
         """
         
-        self.seeds = "https://www.w3schools.com" # Crawling starts from here
-        self.urls = []
-        self._load_indexer()
+        # Read config
+        config = Utils.get_yaml_config_default()
+        rabbitmq_ip = config["rabbitmq"]["ip"]
+        redis_host = config["redis"]["host"]
 
-    def _load_indexer(self):
+        # Initiate RabbitMQ
+        self.mq = RabbitMQ(rabbitmq_ip, queue_names=['crawler_queue'])
+        
+        # Initiate redis
+        self.redis = redis.Redis(host=redis_host, port=6379, db = 0)
+
         self.indexer = Indexer()
 
     def get_http_response(self, url):
@@ -83,8 +97,6 @@ class Spider:
         html_text   -- The source code of the page
         """
         
-        # TODO - Write the indexing logic 
-        # self.urls.append(url)
         self.indexer.index_html_page(url, html_text)
 
     def get_root_domain(self, url):
@@ -97,27 +109,23 @@ class Spider:
         The entry point
         """
 
-        self.domain  = self.get_root_domain(self.seeds)
+        # self.domain  = self.get_root_domain(self.seeds)
 
-        max_depth = 30000 #fetch only max_dept number of webpages
         depth = 0 #initial depth
-        visited = {} #keep track of visited links to avoid cycle
         
-        # BFS from each seed
-        q = [self.seeds]
+        def consume_worker(ch, method, properties, body):
 
-        while len(q) and depth < max_depth:
+            dtag = method.delivery_tag
+            body_json = json.loads(body)
+            url = body_json["url"]
 
-            print ("Page ", depth)
-            # print ("Visited ", visited)
-
-            url = q.pop(0)
-    
             # get html response and index the page
             http_response = self.get_http_response(url)
 
             if not http_response: # Skip if page not retrieved
-                continue
+                ch.basic_nack(method.delivery_tag)
+                print ("Error while getting http response for %s", url)
+                return
 
             html_text = None
             response_url = None
@@ -125,32 +133,43 @@ class Spider:
                 html_text = http_response.data # HTML text
                 response_url = http_response.geturl() # Final URL after redirection
             except Exception:
-                continue
+                ch.basic_nack(method.delivery_tag)
+                print ("Error while processing %s. %s", url, e)
+                return
 
-            visited[response_url] = True  # mark visited links to avoid cycles in BFS
+            # Add to visited set
+            self.redis.sadd("visited", response_url.encode())  # mark visited links to avoid cycles in BFS
             
             try:
                 self.index_page(url, html_text) # Index the retrieved webpage
             except Exception as e:
+                ch.basic_nack(method.delivery_tag)
                 print ("Error while indexing ", response_url, e)
-                continue    
+                return
             
             links = self.get_links(url, html_text) # Get links from the current page
 
             # Push the new found links to ToCrawl list [BFS]
             external_links_threshold = 2
             for link in links:
-                if not visited.get(link):
+                if not self.redis.sismember("visited", link.encode()):
 
-                    if self.get_root_domain(url) != self.domain:
-                        external_links_threshold -= 1
-                        if external_links_threshold == 0:
-                            break
+                    # TODO: Figure out a way to control crawling to external domains
+                    # if self.get_root_domain(url) != self.domain:
+                        # external_links_threshold -= 1
+                        # if external_links_threshold == 0:
+                        #     break
                     
-                    visited[link] = True
-                    q.append(link)
-        
-            depth += 1
-        
+                    # Add to crawler_queue
+                    self.mq.publish("crawler_queue", json.dumps({"url": link}))
+                    
+                    # Add to visited set
+                    self.redis.sadd("visited", link.encode())
+
+            ch.basic_ack(dtag)
+
+        # Step into the endless loop of work.
+        self.mq.consume("crawler_queue", consume_worker)
+             
 s = Spider()
 s.run()

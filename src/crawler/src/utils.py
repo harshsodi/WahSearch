@@ -1,5 +1,6 @@
 import nltk
 import os
+import yaml
 
 class Utils:
 
@@ -41,3 +42,13 @@ class Utils:
                 processed_list.append(word)
 
         return processed_list
+    
+    def get_yaml_config_default():
+        
+        config_path = "/opt/config.yml"
+
+        try:
+            yaml_data = yaml.load(open(config_path), Loader=yaml.FullLoader)
+            return yaml_data
+        except Exception as e:
+            print ("Error while loading config from %s. \n%s", config_path, e)
