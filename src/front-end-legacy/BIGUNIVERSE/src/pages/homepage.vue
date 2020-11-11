@@ -46,7 +46,7 @@
         },
         methods: {
             querySearch(queryString, cb) {
-                axios.get(`/suggestion`, {
+                axios.get(`http://search_head_load-balancer_1/suggestion`, {
                     params: {
                         keywords: this.searchText.trim(),
                     }

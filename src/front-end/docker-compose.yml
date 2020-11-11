@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+
+  load-balancer:
+    image: haproxy
+    ports:
+      - "9090:9090"
+    volumes: 
+      - ./haproxy:/usr/local/etc/haproxy
+    networks:
+      - front_end
+
+  worker:
+    build: .
+    volumes:
+      - "/tmp/npmlgs:/root/.npm/_logs/"
+    networks:
+      - front_end
+
+networks:
+  front_end:
+    driver: bridge
