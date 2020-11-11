@@ -1,0 +1,11 @@
+settings:
+  start-fresh: True
+
+rabbitmq:
+  ip: rabbitmq
+
+mongodb:
+  url: mongodb://mcont:27017
+
+redis:
+  host: redis
