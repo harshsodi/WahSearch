@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  indexer:
+    build: .
+    networks:
+      - indexer
+    volumes:
+      - ./config.yml:/opt/config.yml
+    
+networks:
+  indexer:
+    driver: bridge
