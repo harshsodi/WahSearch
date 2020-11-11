@@ -1,0 +1,5 @@
+rabbitmq:
+  ip: rabbitmq
+
+mongodb:
+  url: mongodb://mcont:27017
