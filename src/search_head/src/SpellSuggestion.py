@@ -3,11 +3,12 @@ class SpellSuggestion do spell check and auto complete with raw keywords
 suggestion
 """
 import re
+import os
 import string
 from collections import Counter
 from Trie import Trie
 
-english_words = "./words_alpha.txt"
+english_words = os.path.join(os.environ["ROOT_PATH"], "src", "words_alpha.txt")
 
 
 class SpellSuggestion(object):

@@ -1,0 +1,2 @@
+mongodb:
+  url: mongodb://<mongo_url>:27017

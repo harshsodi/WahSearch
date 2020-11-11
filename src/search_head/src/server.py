@@ -1,4 +1,5 @@
 import re
+import os
 
 from flask import Flask, request, render_template
 import json 
@@ -7,7 +8,7 @@ from SpellSuggestion import SpellSuggestion
 from search import Search
 
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='templates', )
 spell_suggestions = SpellSuggestion()
 
 @app.route('/')
@@ -17,17 +18,21 @@ def hello_world():
 @app.route('/search', methods=['GET', 'POST'])
 def search_keywords():
     if request.method == 'GET':
-        keywords = request.args.get("keywords")
-        page_number_query = int(request.args.get("page_number"))
-        links_per_page = int(request.args.get("per_page"))
-
-        s = Search()
-        search_results = []
-        page_indexer = 1
         
-        ans = s.search(keywords, links_per_page, page_number=page_number_query)
-    
-        return json.dumps(ans)
+        try:
+            keywords = request.args.get("keywords")
+            page_number_query = int(request.args.get("page_number"))
+            links_per_page = int(request.args.get("per_page"))
+
+            s = Search()
+            search_results = []
+            page_indexer = 1
+            
+            ans = s.search(keywords, links_per_page, page_number=page_number_query)
+            return json.dumps(ans)
+        except Exception as e:
+            print ("Error while processing request.", e)
+            return json.dumps({"total_links":0, "links": [] })
 
 @app.route('/suggestion', methods=['GET', 'POST'])
 def suggested_keywords():
@@ -55,4 +60,4 @@ def suggested_keywords():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)

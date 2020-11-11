@@ -8,8 +8,7 @@ class Utils:
 
     def load_stop_words(self):
         try:
-            dir_path = self.get_project_root()
-            file_path = os.path.join(dir_path, 'src', 'stop_words.dat')
+            file_path = os.path.join(os.environ["ROOT_PATH"], 'src', 'stop_words.dat')
             stop_words_file = open(file_path)
             stop_word_data = stop_words_file.read()
             stop_words_list = stop_word_data.split('\n')
