@@ -87,7 +87,7 @@ export default {
     },
 
       querySearch(queryString, cb) {
-          axios.get(`/suggestion`, {
+          axios.get(`http://search_head_load-balancer_1/suggestion`, {
               params: {
                   keywords: this.searchText.trim(),
               }
@@ -121,7 +121,7 @@ export default {
       }
       this.$router.push(`/result/${this.searchText.trim()}`)
       let fullScreenLoading = Loading.service({ fullscreen: true });
-      axios.get(`/search`, {
+      axios.get(`http://search_head_load-balancer_1/search`, {
         params: {
             keywords: this.searchText.trim(),
             page_number: this.pageNum,
