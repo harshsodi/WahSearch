@@ -9,7 +9,7 @@ Each service can be run as cluster and can be scaled easily.
 
 ## Dependencies
 
-####MongoDB
+###MongoDB
 MongoDB is used as a database to store the inverted index of the web pages. The mongoDB instance must be reachable by the **Indexer**, **Crawler** and **Search API** service.
 
 > If you are running all components on the same host, then you can just spin up a MongoDB container and connect it to the networks created by the respective service (*indexer_indexer*, *crawler_crawler* and *search_head_search_head*).
@@ -17,7 +17,7 @@ MongoDB is used as a database to store the inverted index of the web pages. The 
 $ docker run -p 27017:27017 -d --name mongo mongo
 ```
 
-####RabbitMQ
+###RabbitMQ
 
 RabbitMQ is used as the messaging queue between **Crawler** and **Indexer**. A rabbitMQ instance reachable from the respective services is required.
 
@@ -26,7 +26,7 @@ RabbitMQ is used as the messaging queue between **Crawler** and **Indexer**. A r
 $ docker run -p 5672:5672 -d --name rabbitmq rabbitmq
 ```
 
-####Redis
+###Redis
 Redis is used as an in-memory cache while crawling to maintain the list of already visited page (distributed memoization). **Crawler** is the only service dependent on Redis so you can spin up Redis container on the same host as Crawler
 ```
 $ docker run -p 6379:6379 -d --name redis redis
