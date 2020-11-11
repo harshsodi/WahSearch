@@ -1,4 +1,4 @@
-# Search service
+# Front end service
 
 Host the front end (ReactJS). NPM servers runs on multiple nodes behind a load-balancer (HA Proxy).  
  
