@@ -1,0 +1,27 @@
+
+version : '3'
+
+services:
+  front-load-balancer:
+    image: haproxy
+    ports:
+      - "9999:9999"
+    volumes: 
+      - ./haproxy:/usr/local/etc/haproxy
+    networks:
+      - frontend
+    depends_on:
+      - fe_server
+
+  fe_server:
+    build: .
+    ports:
+      - "8090:8090"
+    networks:
+      - frontend
+    volumes: 
+      - ./config.yml:/opt/config.yml
+
+networks:
+  frontend:
+    driver: bridge

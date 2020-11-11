@@ -1,0 +1,3 @@
+search_api:
+  host: search
+  port: 8080

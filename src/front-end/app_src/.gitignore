@@ -1,0 +1,5 @@
+coverage/
+lib/
+node_modules/
+app/public/bundle.js*
+npm-debug.log*
