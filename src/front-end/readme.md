@@ -2,7 +2,7 @@
 
 Host the front end (ReactJS). NPM servers runs on multiple nodes behind a load-balancer (HA Proxy).  
  
-![](https://i.imgur.com/ysYCJC5.jpg)
+![](https://i.imgur.com/Jkth0Zc.jpg)
 
 ## Requirements
 - This is a containerized application and would require **Docker** and 
