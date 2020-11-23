@@ -1,6 +1,6 @@
 # Indexer
  
-![](https://i.imgur.com/DniLxxX.jpg)
+![](https://i.imgur.com/x387K94.jpg)
 
 ## Requirements
 - This is a containerized application and would require **Docker** and 
