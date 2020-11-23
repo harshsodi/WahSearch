@@ -1,6 +1,6 @@
 # Crawler
  
-![](https://i.imgur.com/8gfvBxs.jpg)
+![](https://i.imgur.com/2PyLxgQ.jpg)
 
 ## Requirements
 - This is a containerized application and would require **Docker** and 
