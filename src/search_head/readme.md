@@ -2,7 +2,7 @@
 
 Serves the search API (Flask). Flash servers runs on multiple nodes behind a load-balancer (HA Proxy).  
  
-![](https://i.imgur.com/4sziajg.jpg)
+![](https://i.imgur.com/XIjwMgB.jpg)
 
 ## Requirements
 - This is a containerized application and would require **Docker** and 
